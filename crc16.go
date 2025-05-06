@@ -10,8 +10,6 @@ import "math/bits"
 //-----------------------------------------------------------------------------
 
 // TAlgo represents parameters of CRC-16 algorithms.
-// More information about algorithms parametrization and parameter descriptions
-// can be found here - http://www.zlib.net/crc_v3.txt
 type TAlgo struct {
 	Poly   uint16
 	Init   uint16
@@ -23,33 +21,46 @@ type TAlgo struct {
 }
 
 // Predefined CRC-16 algorithms.
-// List of algorithms with their parameters borrowed from here -  http://reveng.sourceforge.net/crc-catalogue/16.htm
 //
-// The variables can be used to create TTable for the selected algorithm.
+// Related links:
+// - http://www.zlib.net/crc_v3.txt
+// - http://reveng.sourceforge.net/crc-catalogue/16.htm
+// - https://crccalc.com/?crc=123456789&method=CRC-16&datatype=ascii&outtype=hex
 var (
-	CRC16_DECT_R      = TAlgo{0x0589, 0x0000, false, false, 0x0001, 0x007E, "CRC-16/DECT-R"}
-	CRC16_DECT_X      = TAlgo{0x0589, 0x0000, false, false, 0x0000, 0x007F, "CRC-16/DECT-X"}
-	CRC16_KERMIT      = TAlgo{0x1021, 0x0000, true, true, 0x0000, 0x2189, "CRC-16/KERMIT"}
-	CRC16_XMODEM      = TAlgo{0x1021, 0x0000, false, false, 0x0000, 0x31C3, "CRC-16/XMODEM"}
-	CRC16_AUG_CCITT   = TAlgo{0x1021, 0x1D0F, false, false, 0x0000, 0xE5CC, "CRC-16/AUG-CCITT"}
-	CRC16_TMS37157    = TAlgo{0x1021, 0x89EC, true, true, 0x0000, 0x26B1, "CRC-16/TMS37157"}
-	CRC16_RIELLO      = TAlgo{0x1021, 0xB2AA, true, true, 0x0000, 0x63D0, "CRC-16/RIELLO"}
-	CRC16_CRC_A       = TAlgo{0x1021, 0xC6C6, true, true, 0x0000, 0xBF05, "CRC-16/CRC-A"}
-	CRC16_CCITT_FALSE = TAlgo{0x1021, 0xFFFF, false, false, 0x0000, 0x29B1, "CRC-16/CCITT-FALSE"}
-	CRC16_GENIBUS     = TAlgo{0x1021, 0xFFFF, false, false, 0xFFFF, 0xD64E, "CRC-16/GENIBUS"}
-	CRC16_MCRF4XX     = TAlgo{0x1021, 0xFFFF, true, true, 0x0000, 0x6F91, "CRC-16/MCRF4XX"}
-	CRC16_X_25        = TAlgo{0x1021, 0xFFFF, true, true, 0xFFFF, 0x906E, "CRC-16/X-25"}
-	CRC16_DNP         = TAlgo{0x3D65, 0x0000, true, true, 0xFFFF, 0xEA82, "CRC-16/DNP"}
-	CRC16_EN_13757    = TAlgo{0x3D65, 0x0000, false, false, 0xFFFF, 0xC2B7, "CRC-16/EN-13757"}
-	CRC16_ARC         = TAlgo{0x8005, 0x0000, true, true, 0x0000, 0xBB3D, "CRC-16/ARC"}
-	CRC16_BUYPASS     = TAlgo{0x8005, 0x0000, false, false, 0x0000, 0xFEE8, "CRC-16/BUYPASS"}
-	CRC16_MAXIM       = TAlgo{0x8005, 0x0000, true, true, 0xFFFF, 0x44C2, "CRC-16/MAXIM"}
-	CRC16_DDS_110     = TAlgo{0x8005, 0x800D, false, false, 0x0000, 0x9ECF, "CRC-16/DDS-110"}
-	CRC16_MODBUS      = TAlgo{0x8005, 0xFFFF, true, true, 0x0000, 0x4B37, "CRC-16/MODBUS"}
-	CRC16_USB         = TAlgo{0x8005, 0xFFFF, true, true, 0xFFFF, 0xB4C8, "CRC-16/USB"}
-	CRC16_T10_DIF     = TAlgo{0x8BB7, 0x0000, false, false, 0x0000, 0xD0DB, "CRC-16/T10-DIF"}
-	CRC16_TELEDISK    = TAlgo{0xA097, 0x0000, false, false, 0x0000, 0x0FB3, "CRC-16/TELEDISK"}
-	CRC16_CDMA2000    = TAlgo{0xC867, 0xFFFF, false, false, 0x0000, 0x4C06, "CRC-16/CDMA2000"}
+	CRC16_DECT_R       = TAlgo{0x0589, 0x0000, false, false, 0x0001, 0x007E, "CRC-16/DECT-R"}
+	CRC16_DECT_X       = TAlgo{0x0589, 0x0000, false, false, 0x0000, 0x007F, "CRC-16/DECT-X"}
+	CRC16_NRSC_5       = TAlgo{0x080B, 0xFFFF, true, true, 0x0000, 0xA066, "CRC-16/NRSC-5"}
+	CRC16_GSM          = TAlgo{0x1021, 0x0000, false, false, 0xFFFF, 0xCE3C, "CRC-16/GSM"}
+	CRC16_KERMIT       = TAlgo{0x1021, 0x0000, true, true, 0x0000, 0x2189, "CRC-16/KERMIT"}
+	CRC16_XMODEM       = TAlgo{0x1021, 0x0000, false, false, 0x0000, 0x31C3, "CRC-16/XMODEM"}
+	CRC16_SPI_FUJITSU  = TAlgo{0x1021, 0x1D0F, false, false, 0x0000, 0xE5CC, "CRC-16/SPI-FUJITSU"}
+	CRC16_TMS37157     = TAlgo{0x1021, 0x89EC, true, true, 0x0000, 0x26B1, "CRC-16/TMS37157"}
+	CRC16_RIELLO       = TAlgo{0x1021, 0xB2AA, true, true, 0x0000, 0x63D0, "CRC-16/RIELLO"}
+	CRC16_CRC_A        = TAlgo{0x1021, 0xC6C6, true, true, 0x0000, 0xBF05, "CRC-16/CRC-A"}
+	CRC16_CCITT_FALSE  = TAlgo{0x1021, 0xFFFF, false, false, 0x0000, 0x29B1, "CRC-16/CCITT-FALSE"}
+	CRC16_GENIBUS      = TAlgo{0x1021, 0xFFFF, false, false, 0xFFFF, 0xD64E, "CRC-16/GENIBUS"}
+	CRC16_IBM_3740     = TAlgo{0x1021, 0xFFFF, false, false, 0x0000, 0x29B1, "CRC-16/IBM-3740"}
+	CRC16_IBM_SDLC     = TAlgo{0x1021, 0xFFFF, true, true, 0xFFFF, 0x906E, "CRC-16/IBM-SDLC"}
+	CRC16_MCRF4XX      = TAlgo{0x1021, 0xFFFF, true, true, 0x0000, 0x6F91, "CRC-16/MCRF4XX"}
+	CRC16_X_25         = TAlgo{0x1021, 0xFFFF, true, true, 0xFFFF, 0x906E, "CRC-16/X-25"}
+	CRC16_PROFIBUS     = TAlgo{0x1DCF, 0xFFFF, false, false, 0xFFFF, 0xA819, "CRC-16/PROFIBUS"}
+	CRC16_DNP          = TAlgo{0x3D65, 0x0000, true, true, 0xFFFF, 0xEA82, "CRC-16/DNP"}
+	CRC16_EN_13757     = TAlgo{0x3D65, 0x0000, false, false, 0xFFFF, 0xC2B7, "CRC-16/EN-13757"}
+	CRC16_OPENSAFETY_A = TAlgo{0x5935, 0x0000, false, false, 0x0000, 0x5D38, "CRC-16/OPENSAFETY-A"}
+	CRC16_M17          = TAlgo{0x5935, 0xFFFF, false, false, 0x0000, 0x772B, "CRC-16/M17"}
+	CRC16_LJ1200       = TAlgo{0x6F63, 0x0000, false, false, 0x0000, 0xBDF4, "CRC-16/LJ1200"}
+	CRC16_OPENSAFETY_B = TAlgo{0x755B, 0x0000, false, false, 0x0000, 0x20FE, "CRC-16/OPENSAFETY-B"}
+	CRC16_ARC          = TAlgo{0x8005, 0x0000, true, true, 0x0000, 0xBB3D, "CRC-16/ARC"}
+	CRC16_BUYPASS      = TAlgo{0x8005, 0x0000, false, false, 0x0000, 0xFEE8, "CRC-16/BUYPASS"}
+	CRC16_MAXIM        = TAlgo{0x8005, 0x0000, true, true, 0xFFFF, 0x44C2, "CRC-16/MAXIM"}
+	CRC16_UMTS         = TAlgo{0x8005, 0x0000, false, false, 0x0000, 0xFEE8, "CRC-16/UMTS"}
+	CRC16_DDS_110      = TAlgo{0x8005, 0x800D, false, false, 0x0000, 0x9ECF, "CRC-16/DDS-110"}
+	CRC16_CMS          = TAlgo{0x8005, 0xFFFF, false, false, 0x0000, 0xAEE7, "CRC-16/CMS"}
+	CRC16_MODBUS       = TAlgo{0x8005, 0xFFFF, true, true, 0x0000, 0x4B37, "CRC-16/MODBUS"}
+	CRC16_USB          = TAlgo{0x8005, 0xFFFF, true, true, 0xFFFF, 0xB4C8, "CRC-16/USB"}
+	CRC16_T10_DIF      = TAlgo{0x8BB7, 0x0000, false, false, 0x0000, 0xD0DB, "CRC-16/T10-DIF"}
+	CRC16_TELEDISK     = TAlgo{0xA097, 0x0000, false, false, 0x0000, 0x0FB3, "CRC-16/TELEDISK"}
+	CRC16_CDMA2000     = TAlgo{0xC867, 0xFFFF, false, false, 0x0000, 0x4C06, "CRC-16/CDMA2000"}
 )
 
 // TTable is a 256-word table representing polinomial and algorithm settings for efficient processing.

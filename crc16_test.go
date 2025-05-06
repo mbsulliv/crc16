@@ -31,22 +31,33 @@ func TestMain(aT *testing.T) {
 	}{
 		{&CRC16_DECT_R},
 		{&CRC16_DECT_X},
+		{&CRC16_NRSC_5},
+		{&CRC16_GSM},
 		{&CRC16_KERMIT},
 		{&CRC16_XMODEM},
-		{&CRC16_AUG_CCITT},
+		{&CRC16_SPI_FUJITSU},
 		{&CRC16_TMS37157},
 		{&CRC16_RIELLO},
 		{&CRC16_CRC_A},
 		{&CRC16_CCITT_FALSE},
 		{&CRC16_GENIBUS},
+		{&CRC16_IBM_3740},
+		{&CRC16_IBM_SDLC},
 		{&CRC16_MCRF4XX},
 		{&CRC16_X_25},
+		{&CRC16_PROFIBUS},
 		{&CRC16_DNP},
 		{&CRC16_EN_13757},
+		{&CRC16_OPENSAFETY_A},
+		{&CRC16_M17},
+		{&CRC16_LJ1200},
+		{&CRC16_OPENSAFETY_B},
 		{&CRC16_ARC},
 		{&CRC16_BUYPASS},
 		{&CRC16_MAXIM},
+		{&CRC16_UMTS},
 		{&CRC16_DDS_110},
+		{&CRC16_CMS},
 		{&CRC16_MODBUS},
 		{&CRC16_USB},
 		{&CRC16_T10_DIF},
@@ -62,7 +73,7 @@ func TestMain(aT *testing.T) {
 			So(vTable, ShouldNotBeNil)
 
 			vGotCrc := Checksum(vTestData, vTable)
-			So(vGotCrc, ShouldEqual, vTable.algo.Check)
+			So(fmt.Sprintf("0x%04X", vGotCrc), ShouldEqual, fmt.Sprintf("0x%04X", vTable.algo.Check))
 		})
 	}
 }
